@@ -7,12 +7,9 @@ from cv2 import cv2
 
 from windowcapture import WindowCapture
 
-# wincap = WindowCapture('Maniaplanet')
 wincap = WindowCapture('TrackMania')
 
 loop_time = time()
-
-cv2.namedWindow('Computer Vision', cv2.WINDOW_AUTOSIZE)
 
 lowH = 0
 lowS = 0
@@ -21,20 +18,9 @@ lowV = 0
 highH = 255
 highS = 255
 highV = 70
-cannyA = 200
-cannyB = 300
 
-cv2.createTrackbar('lowH', 'Computer Vision', lowH, 255, lambda x: setattr(sys.modules[__name__], 'lowH', x))
-cv2.createTrackbar('lowS', 'Computer Vision', lowS, 255, lambda x: setattr(sys.modules[__name__], 'lowS', x))
-cv2.createTrackbar('lowV', 'Computer Vision', lowV, 255, lambda x: setattr(sys.modules[__name__], 'lowV', x))
-cv2.createTrackbar('highH', 'Computer Vision', highH, 255, lambda x: setattr(sys.modules[__name__], 'highH', x))
-cv2.createTrackbar('highS', 'Computer Vision', highS, 255, lambda x: setattr(sys.modules[__name__], 'highS', x))
-cv2.createTrackbar('highV', 'Computer Vision', highV, 255, lambda x: setattr(sys.modules[__name__], 'highV', x))
-cv2.createTrackbar('ca', 'Computer Vision', cannyA, 500, lambda x: setattr(sys.modules[__name__], 'cannyA', x))
-cv2.createTrackbar('cb', 'Computer Vision', cannyB, 500, lambda x: setattr(sys.modules[__name__], 'cannyB', x))
 while True:
     i = wincap.get_screenshot()
-    # screenshot = cv2.imread("test.jpg")
     screenshot = i
 
     dilation_size = 6

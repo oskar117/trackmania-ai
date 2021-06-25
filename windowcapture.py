@@ -1,8 +1,8 @@
 import numpy as np
 import win32gui, win32ui, win32con
 
-class WindowCapture:
 
+class WindowCapture:
     # properties
     w = 0
     h = 0
@@ -11,7 +11,6 @@ class WindowCapture:
     cropped_y = 0
     offset_x = 0
     offset_y = 0
-
 
     def __init__(self, window_name):
         # find the handle for the window we want to capture
@@ -36,7 +35,6 @@ class WindowCapture:
         # images into actual screen positions
         self.offset_x = window_rect[0] + self.cropped_x
         self.offset_y = window_rect[1] + self.cropped_y
-
 
     def get_screenshot(self):
 
@@ -75,7 +73,6 @@ class WindowCapture:
 
         return img
 
-
     # find the name of the window you're interested in.
     # once you have it, update window_capture()
     # https://stackoverflow.com/questions/55547940/how-to-get-a-list-of-the-name-of-every-open-window
@@ -85,7 +82,6 @@ class WindowCapture:
                 print(hex(hwnd), win32gui.GetWindowText(hwnd))
 
         win32gui.EnumWindows(winEnumHandler, None)
-
 
     # translate a pixel position on a screenshot image to a pixel position on the screen.
     # pos = (x, y)

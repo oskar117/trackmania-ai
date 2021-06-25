@@ -1,0 +1,78 @@
+import cv2
+import numpy as np
+
+
+class WallDetector:
+
+    DILATION_SIZE = 6
+    KERNEL_ELLIPSE = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * DILATION_SIZE + 1, 2 * DILATION_SIZE + 1), (5, 5))
+    KERNEL_SQUARE = np.array((2, 2), np.uint8)
+
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
+    def calculate_distances(self, image):
+        image = self.transform_perspective(image)
+        mask = self.filter_black_colour(image)
+        mask = self.filter_contours(mask)
+        self.calculate_and_draw(image, mask)
+        cv2.imshow('Computer Vision6', image)
+
+    def filter_black_colour(self, image):
+        mask = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(mask, (0, 0, 0), (255, 255, 70))
+        mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, self.KERNEL_ELLIPSE)
+        return cv2.morphologyEx(mask, cv2.MORPH_OPEN, self.KERNEL_SQUARE)
+
+    def transform_perspective(self, image):
+        width, height = image.shape[:2]
+        points_source = np.float32([[0, 0], [height, 0], [height, width], [0, width]])
+        points_dest = np.float32([[height * 0.33, width * 0.45], [height * 0.66, width * 0.45], [height, width], [0, width]])
+        transformed_matrix = cv2.getPerspectiveTransform(points_dest, points_source)
+        image = cv2.warpPerspective(image, transformed_matrix, (height, width))
+        return cv2.resize(image, (self.width, self.height))
+
+    def filter_contours(self, image):
+        contours, hierarchy = cv2.findContours(image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+        contour_mask = np.zeros_like(image)
+        for contour in contours:
+            if cv2.contourArea(contour, False) > 1000:
+                cv2.drawContours(contour_mask, [contour], -1, (255, 255, 255), 3)
+        return contour_mask
+
+    def calculate_and_draw_line(self, degree, image, mask):
+        if 90 > degree >= 0:
+            self.calculate_and_draw_0_to_90(degree, image, mask)
+        if 180 >= degree > 90:
+            self.calculate_and_draw_90_to_180(180 - degree, image, mask)
+        else:
+            self.calculate_and_draw_90(image, mask)
+
+    def calculate_and_draw_0_to_90(self, degree, image, mask):
+        for y in range(int(self.width / 2) - 1, 0, -1):
+            current_height = int(np.tan(degree * np.pi / 180) * (int(self.width / 2) - 1 - y))
+            coord_value = mask[self.height - 1 - current_height][y]
+            cv2.line(image, (int(self.width / 2), self.height), (y, self.height - current_height), (0, 255, 0), 2)
+            if np.any(coord_value == (255, 255, 255)):
+                break
+
+    def calculate_and_draw_90_to_180(self, degree, image, mask):
+        for y in range(0, int(self.width / 2) - 1):
+            current_height = int(np.tan(degree * np.pi / 180) * y)
+            coord_value = mask[self.height - 1 - current_height][y + int(self.width / 2)]
+            cv2.line(image, (int(self.width / 2), self.height), (y + int(self.width / 2), self.height - current_height), (0, 255, 0), 2)
+            if np.any(coord_value == (255, 255, 255)):
+                break
+
+    def calculate_and_draw_90(self, image, mask):
+        for y in range(self.height - 1, 0, -1):
+            coord_value = mask[y][int(self.width / 2)]
+            cv2.line(image, (int(self.width / 2), self.height), (int(self.width / 2), y), (0, 255, 0), 2)
+            if np.any(coord_value == (255, 255, 255)):
+                break
+
+    def calculate_and_draw(self, image, mask):
+        angles = [_ for _ in range(1, 180) if _ % 15 == 0]
+        for angle in angles:
+            self.calculate_and_draw_line(angle, image, mask)

@@ -1,3 +1,5 @@
+import math
+
 import cv2
 import numpy as np
 
@@ -16,7 +18,8 @@ class WallDetector:
         image = self.transform_perspective(image)
         mask = self.filter_black_colour(image)
         mask = self.filter_contours(mask)
-        self.calculate_and_draw(image, mask)
+        test = self.calculate_and_draw(image, mask)
+        cv2.putText(image, ''.join("{:10.2f}".format(_) for _ in test), (0, 698), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 255, 255), 0, cv2.LINE_AA)
         cv2.imshow('Computer Vision6', image)
 
     def filter_black_colour(self, image):
@@ -43,36 +46,40 @@ class WallDetector:
 
     def calculate_and_draw_line(self, degree, image, mask):
         if 90 > degree >= 0:
-            self.calculate_and_draw_0_to_90(degree, image, mask)
+            return self.calculate_and_draw_0_to_90(degree, image, mask)
         if 180 >= degree > 90:
-            self.calculate_and_draw_90_to_180(180 - degree, image, mask)
+            return self.calculate_and_draw_90_to_180(180 - degree, image, mask)
         else:
-            self.calculate_and_draw_90(image, mask)
+            return self.calculate_and_draw_90(image, mask)
 
     def calculate_and_draw_0_to_90(self, degree, image, mask):
+        y, current_height = 0, 0
         for y in range(int(self.width / 2) - 1, 0, -1):
             current_height = int(np.tan(degree * np.pi / 180) * (int(self.width / 2) - 1 - y))
             coord_value = mask[self.height - 1 - current_height][y]
             cv2.line(image, (int(self.width / 2), self.height), (y, self.height - current_height), (0, 255, 0), 2)
             if np.any(coord_value == (255, 255, 255)):
                 break
+        return math.hypot(self.width / 2 - y - 1, current_height)
 
     def calculate_and_draw_90_to_180(self, degree, image, mask):
+        y, current_height = 0, 0
         for y in range(0, int(self.width / 2) - 1):
             current_height = int(np.tan(degree * np.pi / 180) * y)
             coord_value = mask[self.height - 1 - current_height][y + int(self.width / 2)]
             cv2.line(image, (int(self.width / 2), self.height), (y + int(self.width / 2), self.height - current_height), (0, 255, 0), 2)
             if np.any(coord_value == (255, 255, 255)):
                 break
+        return math.hypot(y, current_height)
 
     def calculate_and_draw_90(self, image, mask):
+        y = 0
         for y in range(self.height - 1, 0, -1):
             coord_value = mask[y][int(self.width / 2)]
             cv2.line(image, (int(self.width / 2), self.height), (int(self.width / 2), y), (0, 255, 0), 2)
             if np.any(coord_value == (255, 255, 255)):
                 break
+        return math.hypot(0, self.height - y - 1)
 
     def calculate_and_draw(self, image, mask):
-        angles = [_ for _ in range(1, 180) if _ % 15 == 0]
-        for angle in angles:
-            self.calculate_and_draw_line(angle, image, mask)
+        return tuple(self.calculate_and_draw_line(_, image, mask) for _ in range(1, 180) if _ % 15 == 0)

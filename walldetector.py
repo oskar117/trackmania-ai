@@ -21,6 +21,7 @@ class WallDetector:
         test = self.calculate_and_draw(image, mask)
         cv2.putText(image, ''.join("{:10.2f}".format(_) for _ in test), (0, 698), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 255, 255), 0, cv2.LINE_AA)
         cv2.imshow('Computer Vision6', image)
+        return test
 
     def filter_black_colour(self, image):
         mask = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)

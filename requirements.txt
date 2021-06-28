@@ -3,3 +3,5 @@ opencv-python~=4.5.2.52
 pywin32
 pytesseract~=0.3.7
 PyDirectInput~=1.0.4
+neat-python
+neat~=0.4.1

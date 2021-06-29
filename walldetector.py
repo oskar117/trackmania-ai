@@ -55,29 +55,34 @@ class WallDetector:
 
     def calculate_and_draw_0_to_90(self, degree, image, mask):
         y, current_height = 0, 0
-        for y in range(int(self.width / 2) - 1, 0, -1):
-            current_height = int(np.tan(degree * np.pi / 180) * (int(self.width / 2) - 1 - y))
+        angle = np.tan(np.deg2rad(degree))
+        half_width = int(self.width / 2)
+        for y in range(half_width - 1, 0, -1):
+            current_height = int(angle * (half_width - 1 - y))
             coord_value = mask[self.height - 1 - current_height][y]
-            cv2.line(image, (int(self.width / 2), self.height), (y, self.height - current_height), (0, 255, 0), 2)
+            cv2.line(image, (half_width, self.height), (y, self.height - current_height), (0, 255, 0), 2)
             if np.any(coord_value == (255, 255, 255)):
                 break
-        return math.hypot(self.width / 2 - y - 1, current_height)
+        return math.hypot(half_width - y - 1, current_height)
 
     def calculate_and_draw_90_to_180(self, degree, image, mask):
         y, current_height = 0, 0
-        for y in range(0, int(self.width / 2) - 1):
-            current_height = int(np.tan(degree * np.pi / 180) * y)
-            coord_value = mask[self.height - 1 - current_height][y + int(self.width / 2)]
-            cv2.line(image, (int(self.width / 2), self.height), (y + int(self.width / 2), self.height - current_height), (0, 255, 0), 2)
+        angle = np.tan(np.deg2rad(degree))
+        half_width = int(self.width / 2)
+        for y in range(0, half_width - 1):
+            current_height = int(angle * y)
+            coord_value = mask[self.height - 1 - current_height][y + half_width]
+            cv2.line(image, (half_width, self.height), (y + half_width, self.height - current_height), (0, 255, 0), 2)
             if np.any(coord_value == (255, 255, 255)):
                 break
         return math.hypot(y, current_height)
 
     def calculate_and_draw_90(self, image, mask):
         y = 0
+        half_width = int(self.width / 2)
         for y in range(self.height - 1, 0, -1):
-            coord_value = mask[y][int(self.width / 2)]
-            cv2.line(image, (int(self.width / 2), self.height), (int(self.width / 2), y), (0, 255, 0), 2)
+            coord_value = mask[y][half_width]
+            cv2.line(image, (half_width, self.height), (half_width, y), (0, 255, 0), 2)
             if np.any(coord_value == (255, 255, 255)):
                 break
         return math.hypot(0, self.height - y - 1)

@@ -101,3 +101,12 @@ stats = neat.StatisticsReporter()
 p.add_reporter(stats)
 time.sleep(5)
 p.run(run_learning, 50)
+# while True:
+#     i = wincap.get_screenshot()
+#     distances = wall_detector.calculate_distances(i)
+#
+#     gear, speed, distance = mdr.extract_data(i)
+#     print(gear, speed, distance)
+#     if cv2.waitKey(1) == ord('q'):
+#         cv2.destroyAllWindows()
+#         break

@@ -6,6 +6,12 @@ from pytesseract import pytesseract
 
 class MetaDataRecognizer:
 
+    def extract_data(self, img):
+        pass
+
+
+class ImageDataRecognizer(MetaDataRecognizer):
+
     def __init__(self):
         pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
         self.custom_config = r'--oem 3 --psm 6'

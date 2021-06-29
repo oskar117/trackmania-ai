@@ -6,7 +6,10 @@ from pytesseract import pytesseract
 
 class MetaDataRecognizer:
 
-    def extract_data(self, img):
+    def extract_data(self, img=None):
+        pass
+
+    def needs_image(self):
         pass
 
 
@@ -16,12 +19,14 @@ class ImageDataRecognizer(MetaDataRecognizer):
         pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
         self.custom_config = r'--oem 3 --psm 6'
 
+    def needs_image(self):
+        return True
+
     def get_value(self, img):
-        w, h = img.shape[:2]
         str_value = pytesseract.image_to_string(img, config=self.custom_config)
         return int(re.sub('[^0-9-]', '', str_value.strip().replace('o', '0')))
 
-    def extract_data(self, img):
+    def extract_data(self, img=None):
         width, height = img.shape[:2]
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
@@ -32,4 +37,8 @@ class ImageDataRecognizer(MetaDataRecognizer):
         gear = self.get_value(gear_img)
         distance_img = img[666:666+40, 1180:1180+130]
         distance = self.get_value(distance_img)
-        return gear, speed, distance
+        return speed, gear, distance
+
+
+class MemoryDataRecognizer(MetaDataRecognizer):
+    pass

@@ -1,3 +1,10 @@
+import time
+
+import neat
+
+from trainer import VisualTrainer
+
+
 class Commands:
 
     def __init__(self):
@@ -17,6 +24,15 @@ class Commands:
 
     def com_learn(self, input_params):
         print('learn!')
+        config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction, neat.DefaultSpeciesSet,
+                                    neat.DefaultStagnation, 'config-feedforward.txt')
+        p = neat.Population(config)
+        p.add_reporter(neat.StdOutReporter(True))
+        stats = neat.StatisticsReporter()
+        p.add_reporter(stats)
+        time.sleep(5)
+        trainer = VisualTrainer()
+        p.run(trainer.train, 50)
 
 
 class CommandException(Exception):

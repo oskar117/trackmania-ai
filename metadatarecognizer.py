@@ -31,14 +31,31 @@ class ImageDataRecognizer(MetaDataRecognizer):
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
         img = 255 - img
-        speed_img = img[666:666+40, 1050:1050+130]
+        speed_img = img[666:666 + 40, 1050:1050 + 130]
         speed = self.get_value(speed_img)
-        gear_img = img[666:666+40, 950:950+130]
+        gear_img = img[666:666 + 40, 950:950 + 130]
         gear = self.get_value(gear_img)
-        distance_img = img[666:666+40, 1180:1180+130]
+        distance_img = img[666:666 + 40, 1180:1180 + 130]
         distance = self.get_value(distance_img)
         return speed, gear, distance
 
 
 class MemoryDataRecognizer(MetaDataRecognizer):
-    pass
+
+    def __init__(self, args) -> None:
+        if len(args) != 6:
+            raise AttributeError(f"Wrong number of parameters: '{len(args)}' instead of 6")
+        self.speed_addr = self.__str_to_hex(args[1])
+        self.gear_addr = self.__str_to_hex(args[2])
+        self.checkpoint_number_addr = self.__str_to_hex(args[3])
+        self.checkpoint_time_addr = self.__str_to_hex(args[4])
+        self.lap_time_addr = self.__str_to_hex(args[5])
+
+    @staticmethod
+    def __str_to_hex(string: str):
+        hex_int = int(string, 16)
+        new_int = hex_int + 0x200
+        return hex(new_int)
+
+    def needs_image(self):
+        return False

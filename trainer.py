@@ -54,8 +54,8 @@ class VisualTrainer(Trainer):
 
 class MemoryTrainer(Trainer):
 
-    def __init__(self):
-        super().__init__(MemoryDataRecognizer())
+    def __init__(self, args):
+        super().__init__(MemoryDataRecognizer(args))
 
     def fitness(self, metadata) -> int:
         pass

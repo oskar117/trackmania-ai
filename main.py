@@ -14,7 +14,7 @@ from cv2 import cv2
 import neat
 
 import readmemory
-from commands import Commands, CommandException
+from commands import Commands, CommandException, Algorithms
 from metadatarecognizer import MetaDataRecognizer
 from walldetector import WallDetector
 from windowcapture import WindowCapture
@@ -89,6 +89,7 @@ class Main:
 
     def __init__(self) -> None:
         self.command_dict = Commands().to_dict()
+        self.algorithm_dict = Algorithms().to_dict()
 
     def run(self):
         cmd, *input_args = sys.argv[1:]
@@ -97,9 +98,14 @@ class Main:
         else:
             if cmd in self.command_dict:
                 try:
-                    self.command_dict[cmd](input_args)
+                    alg_instance = None
+                    try:
+                        alg_instance = self.algorithm_dict[input_args[0]](input_args[2:])
+                    except IndexError:
+                        pass
+                    self.command_dict[cmd](input_args[1], algorithm=alg_instance)
                 except CommandException as e:
-                    print(e)
+                    print(e, file=sys.stderr)
             else:
                 print(f"Command '{cmd}' not found")
 

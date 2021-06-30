@@ -3,6 +3,8 @@ import re
 import cv2
 from pytesseract import pytesseract
 
+from readmemory import MemoryReader
+
 
 class MetaDataRecognizer:
 
@@ -45,6 +47,7 @@ class MemoryDataRecognizer(MetaDataRecognizer):
     def __init__(self, args) -> None:
         if len(args) != 6:
             raise AttributeError(f"Wrong number of parameters: '{len(args)}' instead of 6")
+        self.memory_reader = MemoryReader(int(args[0], 16))
         self.speed_addr = self.__str_to_hex(args[1])
         self.gear_addr = self.__str_to_hex(args[2])
         self.checkpoint_number_addr = self.__str_to_hex(args[3])
@@ -54,8 +57,15 @@ class MemoryDataRecognizer(MetaDataRecognizer):
     @staticmethod
     def __str_to_hex(string: str):
         hex_int = int(string, 16)
-        new_int = hex_int + 0x200
-        return hex(new_int)
+        return hex_int
 
     def needs_image(self):
         return False
+
+    def extract_data(self, img=None):
+        speed = self.memory_reader.read(self.speed_addr)
+        gear = self.memory_reader.read(self.gear_addr)
+        checkpoints_passed = self.memory_reader.read(self.checkpoint_number_addr)
+        last_checkpoint_time = self.memory_reader.read(self.checkpoint_time_addr)
+        final_time = self.memory_reader.read(self.lap_time_addr)
+        return speed, gear, checkpoints_passed, last_checkpoint_time, final_time

@@ -14,7 +14,8 @@ class Car:
         if not self.__metadata_recognizer.needs_image:
             i = None
         metadata = self.__metadata_recognizer.extract_data(img=i)
-        output = net.activate(distances + metadata)
+        print(metadata)
+        output = net.activate(distances + metadata[:2])
         self.__steer(output)
         return metadata
 

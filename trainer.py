@@ -58,4 +58,9 @@ class MemoryTrainer(Trainer):
         super().__init__(MemoryDataRecognizer(args))
 
     def fitness(self, metadata) -> int:
-        pass
+        fitness = metadata[2] * 1000
+        if metadata[3] == metadata[4]:
+            fitness += 10000
+        fitness += (100000 - metadata[3]) * metadata[2]
+        fitness += metadata[0] * 1000
+        return fitness

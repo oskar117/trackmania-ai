@@ -3,6 +3,7 @@ from ctypes import wintypes
 
 
 class MemoryReader:
+
     ERROR_PARTIAL_COPY = 0x012B
     PROCESS_VM_READ = 0x0010
     SIZE_T = ctypes.c_size_t
@@ -10,7 +11,8 @@ class MemoryReader:
 
     def __init__(self, pid) -> None:
         self.pid = pid
-        self.kernel32 = ctypes.WinDLL('self.kernel32', use_last_error=True)
+        self.kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)
+
         self.kernel32.OpenProcess.errcheck = self._check_zero
         self.kernel32.OpenProcess.restype = wintypes.HANDLE
         self.kernel32.OpenProcess.argtypes = (

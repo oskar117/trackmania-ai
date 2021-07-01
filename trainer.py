@@ -1,12 +1,17 @@
+import ctypes
 import time
 
 import cv2
 import neat
+import pyautogui as pyautogui
 import pydirectinput
 from car import Car
 from metadatarecognizer import ImageDataRecognizer, MemoryDataRecognizer
 from walldetector import WallDetector
 from windowcapture import WindowCapture
+
+import win32api
+import win32com.client
 
 
 class Trainer:
@@ -28,16 +33,18 @@ class Trainer:
         for index, car in enumerate(cars):
 
             gen_time = time.time()
-            pydirectinput.press('delete')
-            metadata = None
+            pydirectinput.press("delete")
+            fitness = None
             while time.time() - gen_time < 20:
-                metadata = car.drive(nets[cars.index(car)])
-                if metadata[0] < -20:
+                metadata, distances = car.drive(nets[cars.index(car)])
+                if metadata[1] == 0 and metadata[0] > 20: #or len([*filter(lambda x: x <= 80, distances)]) > 0:
+                    fitness = 0
                     break
                 if cv2.waitKey(1) == ord('q'):
                     cv2.destroyAllWindows()
                     break
-            genomes[index][1].fitness = self.fitness(metadata)
+                fitness = self.fitness(metadata)
+            genomes[index][1].fitness = fitness
 
     def fitness(self, metadata) -> int:
         pass

@@ -1,9 +1,15 @@
 import pickle
 import time
 
+import cv2
+import keyboard as keyboard
 import neat
+import pyautogui
 
-from trainer import VisualTrainer, MemoryTrainer
+from car import Car
+from trainer import VisualTrainer, MemoryTrainer, Trainer
+from walldetector import WallDetector
+from windowcapture import WindowCapture
 
 
 class Options:
@@ -27,8 +33,15 @@ class Commands(Options):
         super().__init__()
         self.command_prefix = 'com_'
 
-    def com_play(self, input_params):
-        print('play!')
+    def com_play(self, input_params, algorithm: Trainer = None):
+        if algorithm is None:
+            raise CommandException("No learning method specified")
+        with open(input_params, 'rb') as fp:
+            net = pickle.load(fp)
+            car = Car(WindowCapture('Trackmania'), WallDetector(700, 700), algorithm.meta_data_recognizer)
+            while not keyboard.is_pressed('q'):
+                car.drive(net)
+        cv2.destroyAllWindows()
 
     def com_learn(self, input_params, algorithm=None):
         if algorithm is None:
@@ -39,8 +52,8 @@ class Commands(Options):
         trainer = algorithm
         best_genome = population.run(trainer.train, 1)
         print(best_genome)
-        best_net = trainer.best[1]
-        with open(f"best_net_{algorithm}_{time.time()}.pickle", "wb") as f:
+        best_net = trainer.best[0]
+        with open(input_params, "wb") as f:
             pickle.dump(best_net, f)
 
     def com_help(self, input_params):

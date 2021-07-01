@@ -20,7 +20,11 @@ class Trainer:
         self._wall_detector = WallDetector(700, 700)
         self.wincap = WindowCapture('TrackMania')
         self._metadata_recognizer = metadata_recognizer
-        self.best = (None, 0)
+        self.best = (None, -1)
+
+    @property
+    def meta_data_recognizer(self):
+        return self._metadata_recognizer
 
     def train(self, genomes, config):
         cars = []
@@ -47,7 +51,7 @@ class Trainer:
                 fitness = self.fitness(metadata)
             genomes[index][1].fitness = fitness
             if fitness > self.best[1]:
-                best = (nets[cars.index(car)], fitness)
+                self.best = (nets[cars.index(car)], fitness)
 
     def fitness(self, metadata) -> int:
         pass

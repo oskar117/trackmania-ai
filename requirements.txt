@@ -1,7 +1,10 @@
 numpy~=1.20.3
 opencv-python~=4.5.2.52
-pywin32
+pywin32~=301
 pytesseract~=0.3.7
 PyDirectInput~=1.0.4
 neat-python
 neat~=0.4.1
+PyAutoGUI~=0.9.52
+keyboard~=0.13.5
+scikit-learn~=0.24.2

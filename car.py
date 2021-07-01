@@ -25,7 +25,6 @@ class Car:
         # down = input[1]
         left = input[1]
         right = input[2]
-        print(input)
 
         if up > 0:
             pydirectinput.keyDown('up')

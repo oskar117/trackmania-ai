@@ -2,7 +2,7 @@ import math
 
 import cv2
 import numpy as np
-
+from sklearn import preprocessing
 
 class WallDetector:
 
@@ -19,8 +19,11 @@ class WallDetector:
         mask = self.filter_black_colour(image)
         mask = self.filter_contours(mask)
         test = self.calculate_and_draw(image, mask)
+        test = tuple(preprocessing.normalize(np.array(test).reshape(1, -1))[0])
+        print(test)
         cv2.putText(image, ''.join("{:10.2f}".format(_) for _ in test), (0, 698), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 255, 255), 0, cv2.LINE_AA)
         cv2.imshow('Computer Vision6', image)
+        cv2.waitKey(1)
         return test
 
     def filter_black_colour(self, image):
@@ -88,4 +91,4 @@ class WallDetector:
         return math.hypot(0, self.height - y - 1)
 
     def calculate_and_draw(self, image, mask):
-        return tuple(self.calculate_and_draw_line(_, image, mask) for _ in range(1, 180) if _ % 15 == 0)
+        return [self.calculate_and_draw_line(_, image, mask) for _ in range(1, 180) if _ % 15 == 0]

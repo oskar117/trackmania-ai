@@ -9,15 +9,15 @@ from trainer import VisualTrainer, MemoryTrainer
 class Options:
 
     def __init__(self):
-        self._command_prefix = None
+        self.command_prefix = None
 
     def to_dict(self):
         result = {}
         for command_name in dir(self):
-            if not command_name.startswith(self._command_prefix):
+            if not command_name.startswith(self.command_prefix):
                 continue
             method = getattr(self, command_name)
-            result[command_name[len(self._command_prefix):]] = method
+            result[command_name[len(self.command_prefix):]] = method
         return result
 
 
@@ -25,7 +25,7 @@ class Commands(Options):
 
     def __init__(self):
         super().__init__()
-        self._command_prefix = 'com_'
+        self.command_prefix = 'com_'
 
     def com_play(self, input_params):
         print('play!')
@@ -37,10 +37,14 @@ class Commands(Options):
         print('You have 5 seconds to click on game window!')
         time.sleep(5)
         trainer = algorithm
-        best_car_net = population.run(trainer.train, 50)
+        best_genome = population.run(trainer.train, 1)
+        print(best_genome)
+        best_net = trainer.best[1]
+        with open(f"best_net_{algorithm}_{time.time()}.pickle", "wb") as f:
+            pickle.dump(best_net, f)
 
     def com_help(self, input_params):
-        print("help")
+        print("help"),
 
     def __set_up_neat(self, config_file) -> neat.Population:
         config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction, neat.DefaultSpeciesSet,
@@ -52,12 +56,11 @@ class Commands(Options):
         return p
 
 
-
 class Algorithms(Options):
 
     def __init__(self) -> None:
         super().__init__()
-        self._command_prefix = 'alg_'
+        self.command_prefix = 'alg_'
 
     def alg_visual(self, args):
         return VisualTrainer()

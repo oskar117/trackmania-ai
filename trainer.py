@@ -20,6 +20,7 @@ class Trainer:
         self._wall_detector = WallDetector(700, 700)
         self.wincap = WindowCapture('TrackMania')
         self._metadata_recognizer = metadata_recognizer
+        self.best = (None, 0)
 
     def train(self, genomes, config):
         cars = []
@@ -35,7 +36,7 @@ class Trainer:
             gen_time = time.time()
             pydirectinput.press("delete")
             fitness = None
-            while time.time() - gen_time < 20:
+            while time.time() - gen_time < 12:
                 metadata, distances = car.drive(nets[cars.index(car)])
                 if metadata[1] == 0 and metadata[0] > 20: #or len([*filter(lambda x: x <= 80, distances)]) > 0:
                     fitness = 0
@@ -45,6 +46,8 @@ class Trainer:
                     break
                 fitness = self.fitness(metadata)
             genomes[index][1].fitness = fitness
+            if fitness > self.best[1]:
+                best = (nets[cars.index(car)], fitness)
 
     def fitness(self, metadata) -> int:
         pass
@@ -57,6 +60,9 @@ class VisualTrainer(Trainer):
 
     def fitness(self, metadata) -> int:
         return metadata[2]
+
+    def __str__(self) -> str:
+        return 'visual'
 
 
 class MemoryTrainer(Trainer):
@@ -71,3 +77,6 @@ class MemoryTrainer(Trainer):
         fitness += (100000 - metadata[3]) * metadata[2]
         fitness += metadata[0] * 1000
         return fitness
+
+    def __str__(self) -> str:
+        return 'memory'

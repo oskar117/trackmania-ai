@@ -45,7 +45,7 @@ class Commands(Options):
     def com_learn(self, input_params, algorithm=None):
         if algorithm is None:
             raise CommandException("No learning method specified")
-        population = self.__set_up_neat('../config-feedforward.txt')
+        population = self.__set_up_neat('config-feedforward.txt')
         print('You have 5 seconds to click on game window!')
         time.sleep(5)
         trainer = algorithm

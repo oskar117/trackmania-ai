@@ -10,9 +10,10 @@ class WallDetector:
     KERNEL_ELLIPSE = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * DILATION_SIZE + 1, 2 * DILATION_SIZE + 1), (5, 5))
     KERNEL_SQUARE = np.array((2, 2), np.uint8)
 
-    def __init__(self, width, height):
+    def __init__(self, width, height, show_image=True):
         self.width = width
         self.height = height
+        self.show_image = show_image
 
     def calculate_distances(self, image):
         image = self.transform_perspective(image)
@@ -21,9 +22,10 @@ class WallDetector:
         test = self.calculate_and_draw(image, mask)
         test = tuple(preprocessing.normalize(np.array(test).reshape(1, -1))[0])
         print(test)
-        cv2.putText(image, ''.join("{:10.2f}".format(_) for _ in test), (0, 698), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 255, 255), 0, cv2.LINE_AA)
-        cv2.imshow('Computer Vision6', image)
-        cv2.waitKey(1)
+        if self.show_image:
+            cv2.putText(image, ''.join("{:10.2f}".format(_) for _ in test), (0, 698), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 255, 255), 0, cv2.LINE_AA)
+            cv2.imshow('Car camera', image)
+            cv2.waitKey(1)
         return test
 
     def filter_black_colour(self, image):

@@ -48,14 +48,14 @@ class MemoryDataRecognizer(MetaDataRecognizer):
         if len(args) != 6:
             raise AttributeError(f"Wrong number of parameters: '{len(args)}' instead of 6")
         self.memory_reader = MemoryReader(int(args[0], 16))
-        self.speed_addr = self.__str_to_hex(args[1])
-        self.gear_addr = self.__str_to_hex(args[2])
-        self.checkpoint_number_addr = self.__str_to_hex(args[3])
-        self.checkpoint_time_addr = self.__str_to_hex(args[4])
-        self.lap_time_addr = self.__str_to_hex(args[5])
+        self.speed_addr = self.str_to_hex(args[1])
+        self.gear_addr = self.str_to_hex(args[2])
+        self.checkpoint_number_addr = self.str_to_hex(args[3])
+        self.checkpoint_time_addr = self.str_to_hex(args[4])
+        self.lap_time_addr = self.str_to_hex(args[5])
 
     @staticmethod
-    def __str_to_hex(string: str):
+    def str_to_hex(string: str):
         hex_int = int(string, 16)
         return hex_int
 

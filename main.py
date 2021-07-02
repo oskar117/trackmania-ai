@@ -1,6 +1,6 @@
 import sys
 
-from commands import Commands, CommandException, Algorithms
+from ai.commands import Commands, CommandException, Algorithms
 
 
 # wincap = WindowCapture('TrackMania')

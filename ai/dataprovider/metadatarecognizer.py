@@ -3,7 +3,7 @@ import re
 import cv2
 from pytesseract import pytesseract
 
-from dataprovider.readmemory import MemoryReader
+from ai.dataprovider.readmemory import MemoryReader
 
 
 class MetaDataRecognizer:

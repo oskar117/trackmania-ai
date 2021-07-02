@@ -5,10 +5,10 @@ import cv2
 import keyboard as keyboard
 import neat
 
-from car import Car
-from trainer import VisualTrainer, MemoryTrainer, Trainer
-from dataprovider.walldetector import WallDetector
-from dataprovider.windowcapture import WindowCapture
+from ai.car import Car
+from ai.trainer import VisualTrainer, MemoryTrainer, Trainer
+from ai.dataprovider.walldetector import WallDetector
+from ai.dataprovider.windowcapture import WindowCapture
 
 
 class Options:
@@ -45,7 +45,7 @@ class Commands(Options):
     def com_learn(self, input_params, algorithm=None):
         if algorithm is None:
             raise CommandException("No learning method specified")
-        population = self.__set_up_neat('config-feedforward.txt')
+        population = self.__set_up_neat('../config-feedforward.txt')
         print('You have 5 seconds to click on game window!')
         time.sleep(5)
         trainer = algorithm

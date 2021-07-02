@@ -3,10 +3,10 @@ import time
 import cv2
 import neat
 import pydirectinput
-from car import Car
-from dataprovider.metadatarecognizer import ImageDataRecognizer, MemoryDataRecognizer
-from dataprovider.walldetector import WallDetector
-from dataprovider.windowcapture import WindowCapture
+from ai.car import Car
+from ai.dataprovider.metadatarecognizer import ImageDataRecognizer, MemoryDataRecognizer
+from ai.dataprovider.walldetector import WallDetector
+from ai.dataprovider.windowcapture import WindowCapture
 
 
 class Trainer:

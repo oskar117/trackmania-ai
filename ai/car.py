@@ -1,17 +1,18 @@
 import threading
 
 import pydirectinput
+import neat
 
 
 class Car:
 
-    def __init__(self, wincap, wall_detector, metadata_recognizer) -> None:
-        self.__wincap = wincap
+    def __init__(self, window_capture, wall_detector, metadata_recognizer) -> None:
+        self.__window_capture = window_capture
         self.__wall_detector = wall_detector
         self.__metadata_recognizer = metadata_recognizer
 
-    def drive(self, net):
-        i = self.__wincap.get_screenshot()
+    def drive(self, net: neat.nn.FeedForwardNetwork) -> (tuple, tuple):
+        i = self.__window_capture.get_screenshot()
         distances = self.__wall_detector.calculate_distances(i)
         if not self.__metadata_recognizer.needs_image:
             i = None
@@ -20,21 +21,16 @@ class Car:
         threading.Thread(target=self.__steer, args=(output,)).start()
         return metadata, distances
 
-    def __steer(self, input):
-        up = input[0]
-        # down = input[1]
-        left = input[1]
-        right = input[2]
+    def __steer(self, driver_input: tuple) -> None:
+
+        up = driver_input[0]
+        left = driver_input[1]
+        right = driver_input[2]
 
         if up > 0:
             pydirectinput.keyDown('up')
         else:
             pydirectinput.keyUp('up')
-
-        # if down > 0:
-        #     pydirectinput.keyDown('down')
-        # else:
-        #     pydirectinput.keyUp('down')
 
         if left > 0:
             pydirectinput.keyDown('left')

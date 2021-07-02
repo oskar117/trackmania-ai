@@ -2,13 +2,13 @@ import re
 
 import cv2
 from pytesseract import pytesseract
-
+import numpy as np
 from ai.dataprovider.readmemory import MemoryReader
 
 
 class MetaDataRecognizer:
 
-    def extract_data(self, img=None):
+    def extract_data(self, img=None) -> tuple:
         pass
 
     def needs_image(self):
@@ -21,10 +21,10 @@ class ImageDataRecognizer(MetaDataRecognizer):
         pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
         self.custom_config = r'--oem 3 --psm 6'
 
-    def needs_image(self):
+    def needs_image(self) -> bool:
         return True
 
-    def get_value(self, img):
+    def get_value(self, img: np.array):
         str_value = pytesseract.image_to_string(img, config=self.custom_config)
         return int(re.sub('[^0-9-]', '', str_value.strip().replace('o', '0')))
 
@@ -44,7 +44,7 @@ class ImageDataRecognizer(MetaDataRecognizer):
 
 class MemoryDataRecognizer(MetaDataRecognizer):
 
-    def __init__(self, args) -> None:
+    def __init__(self, args: tuple) -> None:
         if len(args) != 6:
             raise AttributeError(f"Wrong number of parameters: '{len(args)}' instead of 6")
         self.memory_reader = MemoryReader(int(args[0], 16))
@@ -55,14 +55,14 @@ class MemoryDataRecognizer(MetaDataRecognizer):
         self.lap_time_addr = self.str_to_hex(args[5])
 
     @staticmethod
-    def str_to_hex(string: str):
+    def str_to_hex(string: str) -> int:
         hex_int = int(string, 16)
         return hex_int
 
-    def needs_image(self):
+    def needs_image(self) -> bool:
         return False
 
-    def extract_data(self, img=None):
+    def extract_data(self, img=None) -> tuple:
         speed = self.memory_reader.read(self.speed_addr)
         gear = self.memory_reader.read(self.gear_addr)
         checkpoints_passed = self.memory_reader.read(self.checkpoint_number_addr)

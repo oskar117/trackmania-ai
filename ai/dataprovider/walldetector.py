@@ -4,45 +4,48 @@ import cv2
 import numpy as np
 from sklearn import preprocessing
 
-class WallDetector:
 
+class WallDetector:
     DILATION_SIZE = 6
-    KERNEL_ELLIPSE = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * DILATION_SIZE + 1, 2 * DILATION_SIZE + 1), (5, 5))
+    KERNEL_ELLIPSE = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * DILATION_SIZE + 1, 2 * DILATION_SIZE + 1),
+                                               (5, 5))
     KERNEL_SQUARE = np.array((2, 2), np.uint8)
 
-    def __init__(self, width, height, show_image=True):
+    def __init__(self, width: int, height: int, show_image: bool = True):
         self.width = width
         self.height = height
         self.show_image = show_image
 
-    def calculate_distances(self, image):
-        image = self.transform_perspective(image)
-        mask = self.filter_black_colour(image)
-        mask = self.filter_contours(mask)
-        test = self.calculate_and_draw(image, mask)
+    def calculate_distances(self, image: np.array) -> tuple:
+        image = self.__transform_perspective(image)
+        mask = self.__filter_black_colour(image)
+        mask = self.__filter_contours(mask)
+        test = self.__calculate_and_draw(image, mask)
         test = tuple(preprocessing.normalize(np.array(test).reshape(1, -1))[0])
         print(test)
         if self.show_image:
-            cv2.putText(image, ''.join("{:10.2f}".format(_) for _ in test), (0, 698), cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 255, 255), 0, cv2.LINE_AA)
+            cv2.putText(image, ''.join("{:10.2f}".format(_) for _ in test), (0, 698), cv2.FONT_HERSHEY_SIMPLEX, 0.35,
+                        (0, 255, 255), 0, cv2.LINE_AA)
             cv2.imshow('Car camera', image)
             cv2.waitKey(1)
         return test
 
-    def filter_black_colour(self, image):
+    def __filter_black_colour(self, image: np.array) -> np.array:
         mask = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(mask, (0, 0, 0), (255, 255, 70))
         mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, self.KERNEL_ELLIPSE)
         return cv2.morphologyEx(mask, cv2.MORPH_OPEN, self.KERNEL_SQUARE)
 
-    def transform_perspective(self, image):
+    def __transform_perspective(self, image: np.array) -> np.array:
         width, height = image.shape[:2]
         points_source = np.float32([[0, 0], [height, 0], [height, width], [0, width]])
-        points_dest = np.float32([[height * 0.33, width * 0.45], [height * 0.66, width * 0.45], [height, width], [0, width]])
+        points_dest = np.float32(
+            [[height * 0.33, width * 0.45], [height * 0.66, width * 0.45], [height, width], [0, width]])
         transformed_matrix = cv2.getPerspectiveTransform(points_dest, points_source)
         image = cv2.warpPerspective(image, transformed_matrix, (height, width))
         return cv2.resize(image, (self.width, self.height))
 
-    def filter_contours(self, image):
+    def __filter_contours(self, image: np.array) -> np.array:
         contours, hierarchy = cv2.findContours(image, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
         contour_mask = np.zeros_like(image)
         for contour in contours:
@@ -50,15 +53,15 @@ class WallDetector:
                 cv2.drawContours(contour_mask, [contour], -1, (255, 255, 255), 3)
         return contour_mask
 
-    def calculate_and_draw_line(self, degree, image, mask):
+    def __calculate_and_draw_line(self, degree: int, image: np.array, mask: np.array) -> float:
         if 90 > degree >= 0:
-            return self.calculate_and_draw_0_to_90(degree, image, mask)
+            return self.__calculate_and_draw_0_to_90(degree, image, mask)
         if 180 >= degree > 90:
-            return self.calculate_and_draw_90_to_180(180 - degree, image, mask)
+            return self.__calculate_and_draw_90_to_180(180 - degree, image, mask)
         else:
-            return self.calculate_and_draw_90(image, mask)
+            return self.__calculate_and_draw_90(image, mask)
 
-    def calculate_and_draw_0_to_90(self, degree, image, mask):
+    def __calculate_and_draw_0_to_90(self, degree: int, image: np.array, mask: np.array) -> float:
         y, current_height = 0, 0
         angle = np.tan(np.deg2rad(degree))
         half_width = int(self.width / 2)
@@ -70,7 +73,7 @@ class WallDetector:
                 break
         return math.hypot(half_width - y - 1, current_height)
 
-    def calculate_and_draw_90_to_180(self, degree, image, mask):
+    def __calculate_and_draw_90_to_180(self, degree: int, image: np.array, mask: np.array) -> float:
         y, current_height = 0, 0
         angle = np.tan(np.deg2rad(degree))
         half_width = int(self.width / 2)
@@ -82,7 +85,7 @@ class WallDetector:
                 break
         return math.hypot(y, current_height)
 
-    def calculate_and_draw_90(self, image, mask):
+    def __calculate_and_draw_90(self, image: np.array, mask: np.array) -> float:
         y = 0
         half_width = int(self.width / 2)
         for y in range(self.height - 1, 0, -1):
@@ -92,5 +95,5 @@ class WallDetector:
                 break
         return math.hypot(0, self.height - y - 1)
 
-    def calculate_and_draw(self, image, mask):
-        return [self.calculate_and_draw_line(_, image, mask) for _ in range(1, 180) if _ % 15 == 0]
+    def __calculate_and_draw(self, image: np.array, mask: np.array) -> list:
+        return [self.__calculate_and_draw_line(_, image, mask) for _ in range(1, 180) if _ % 15 == 0]

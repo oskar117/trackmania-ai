@@ -13,10 +13,10 @@ from ai.dataprovider.windowcapture import WindowCapture
 
 class Options:
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.command_prefix = None
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         result = {}
         for command_name in dir(self):
             if not command_name.startswith(self.command_prefix):
@@ -32,7 +32,7 @@ class Commands(Options):
         super().__init__()
         self.command_prefix = 'com_'
 
-    def com_play(self, input_params, algorithm: Trainer = None):
+    def com_play(self, input_params: str, algorithm: Trainer = None) -> None:
         if algorithm is None:
             raise CommandException("No learning method specified")
         with open(input_params, 'rb') as fp:
@@ -42,7 +42,7 @@ class Commands(Options):
                 car.drive(net)
         cv2.destroyAllWindows()
 
-    def com_learn(self, input_params, algorithm=None):
+    def com_learn(self, input_params: str, algorithm=None) -> None:
         if algorithm is None:
             raise CommandException("No learning method specified")
         population = self.__set_up_neat('config-feedforward.txt')
@@ -55,10 +55,10 @@ class Commands(Options):
         with open(input_params, "wb") as f:
             pickle.dump(best_net, f)
 
-    def com_help(self, input_params):
+    def com_help(self, input_params: str) -> None:
         print("help"),
 
-    def __set_up_neat(self, config_file) -> neat.Population:
+    def __set_up_neat(self, config_file: str) -> neat.Population:
         config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction, neat.DefaultSpeciesSet,
                                     neat.DefaultStagnation, config_file)
         p = neat.Population(config)
@@ -74,10 +74,10 @@ class Algorithms(Options):
         super().__init__()
         self.command_prefix = 'alg_'
 
-    def alg_visual(self, args):
+    def alg_visual(self, args: tuple) -> Trainer:
         return VisualTrainer()
 
-    def alg_memory(self, args):
+    def alg_memory(self, args: tuple) -> Trainer:
         return MemoryTrainer(args)
 
 

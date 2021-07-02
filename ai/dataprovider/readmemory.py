@@ -9,7 +9,7 @@ class MemoryReader:
     SIZE_T = ctypes.c_size_t
     PSIZE_T = ctypes.POINTER(SIZE_T)
 
-    def __init__(self, pid) -> None:
+    def __init__(self, pid: int) -> None:
         self.pid = pid
         self.kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)
 
@@ -33,21 +33,21 @@ class MemoryReader:
             raise ctypes.WinError(ctypes.get_last_error())
         return args
 
-    def _read_process_memory(self, address, size, allow_partial=False):
+    def _read_process_memory(self, address: int, size: int, allow_partial: bool = False):
         buf = (ctypes.c_char * size)()
         nread = self.SIZE_T()
-        hProcess = self.kernel32.OpenProcess(self.PROCESS_VM_READ, False, self.pid)
+        h_process = self.kernel32.OpenProcess(self.PROCESS_VM_READ, False, self.pid)
         try:
-            self.kernel32.ReadProcessMemory(hProcess, address, buf, size,
+            self.kernel32.ReadProcessMemory(h_process, address, buf, size,
                                             ctypes.byref(nread))
         except WindowsError as e:
             if not allow_partial or e.winerror != self.ERROR_PARTIAL_COPY:
                 raise
         finally:
-            self.kernel32.CloseHandle(hProcess)
+            self.kernel32.CloseHandle(h_process)
         return buf[:nread.value]
 
-    def read(self, address, size=3, endian='little'):
+    def read(self, address: int, size: int = 3, endian: str = 'little'):
         return int.from_bytes(
             self._read_process_memory(address, size),
             endian

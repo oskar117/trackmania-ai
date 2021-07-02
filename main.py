@@ -1,23 +1,7 @@
-import multiprocessing
-import os
 import sys
-import time
 
-import pydirectinput
-import pytesseract as pytesseract
-import pywintypes
-
-import pywintypes
-import win32file
-import win32pipe
-from cv2 import cv2
-import neat
-
-import readmemory
 from commands import Commands, CommandException, Algorithms
-from metadatarecognizer import MetaDataRecognizer
-from walldetector import WallDetector
-from windowcapture import WindowCapture
+
 
 # wincap = WindowCapture('TrackMania')
 # mdr = MetaDataRecognizer()

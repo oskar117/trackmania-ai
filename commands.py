@@ -4,12 +4,11 @@ import time
 import cv2
 import keyboard as keyboard
 import neat
-import pyautogui
 
 from car import Car
 from trainer import VisualTrainer, MemoryTrainer, Trainer
-from walldetector import WallDetector
-from windowcapture import WindowCapture
+from dataprovider.walldetector import WallDetector
+from dataprovider.windowcapture import WindowCapture
 
 
 class Options:

@@ -1,17 +1,12 @@
-import ctypes
 import time
 
 import cv2
 import neat
-import pyautogui as pyautogui
 import pydirectinput
 from car import Car
-from metadatarecognizer import ImageDataRecognizer, MemoryDataRecognizer
-from walldetector import WallDetector
-from windowcapture import WindowCapture
-
-import win32api
-import win32com.client
+from dataprovider.metadatarecognizer import ImageDataRecognizer, MemoryDataRecognizer
+from dataprovider.walldetector import WallDetector
+from dataprovider.windowcapture import WindowCapture
 
 
 class Trainer:

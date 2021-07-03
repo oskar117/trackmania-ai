@@ -22,7 +22,6 @@ class WallDetector:
         mask = self.__filter_contours(mask)
         test = self.__calculate_and_draw(image, mask)
         test = tuple(preprocessing.normalize(np.array(test).reshape(1, -1))[0])
-        print(test)
         if self.show_image:
             cv2.putText(image, ''.join("{:10.2f}".format(_) for _ in test), (0, 698), cv2.FONT_HERSHEY_SIMPLEX, 0.35,
                         (0, 255, 255), 0, cv2.LINE_AA)

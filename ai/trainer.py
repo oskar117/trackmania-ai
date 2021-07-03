@@ -35,7 +35,7 @@ class Trainer:
             gen_time = time.time()
             pydirectinput.press("delete")
             fitness = None
-            genome_time = 20
+            genome_time = 10
             last_finished_checkpoint = 0
             lap_completed = False
             while time.time() - gen_time < genome_time and not lap_completed:

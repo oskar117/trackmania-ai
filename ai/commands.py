@@ -49,7 +49,7 @@ class Commands(Options):
         print('You have 5 seconds to click on game window!')
         time.sleep(5)
         trainer = algorithm
-        best_genome = population.run(trainer.train, 1)
+        best_genome = population.run(trainer.train, 20)
         print(best_genome)
         best_net = trainer.best[0]
         with open(input_params, "wb") as f:

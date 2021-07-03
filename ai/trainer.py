@@ -37,7 +37,8 @@ class Trainer:
             fitness = None
             genome_time = 20
             last_finished_checkpoint = 0
-            while time.time() - gen_time < genome_time:
+            lap_completed = False
+            while time.time() - gen_time < genome_time and not lap_completed:
                 metadata, distances = car.drive(nets[cars.index(car)])
                 if metadata[1] == 0 and metadata[0] > 20:
                     fitness = 0
@@ -46,9 +47,13 @@ class Trainer:
                     cv2.destroyAllWindows()
                     break
                 fitness = self.fitness(metadata)
-                if len(metadata) is 5 and metadata[2] > last_finished_checkpoint:
-                    genome_time += 20
-                    last_finished_checkpoint += 1
+                if len(metadata) is 5:
+                    if metadata[2] > last_finished_checkpoint:
+                        genome_time += 20
+                        last_finished_checkpoint += 1
+                    if metadata[3] == metadata[4]:
+                        lap_completed = True
+                        fitness += 100000
             genomes[index][1].fitness = fitness
             if fitness > self.best[1]:
                 self.best = (nets[cars.index(car)], fitness)

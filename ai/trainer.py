@@ -35,7 +35,9 @@ class Trainer:
             gen_time = time.time()
             pydirectinput.press("delete")
             fitness = None
-            while time.time() - gen_time < 12:
+            genome_time = 20
+            last_finished_checkpoint = 0
+            while time.time() - gen_time < genome_time:
                 metadata, distances = car.drive(nets[cars.index(car)])
                 if metadata[1] == 0 and metadata[0] > 20:
                     fitness = 0
@@ -44,6 +46,9 @@ class Trainer:
                     cv2.destroyAllWindows()
                     break
                 fitness = self.fitness(metadata)
+                if len(metadata) is 5 and metadata[2] > last_finished_checkpoint:
+                    genome_time += 20
+                    last_finished_checkpoint += 1
             genomes[index][1].fitness = fitness
             if fitness > self.best[1]:
                 self.best = (nets[cars.index(car)], fitness)

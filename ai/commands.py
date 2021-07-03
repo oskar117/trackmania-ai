@@ -80,7 +80,7 @@ class Algorithms(Options):
         super().__init__()
         self.command_prefix = 'alg_'
 
-    def alg_visual(self, args: tuple) -> Trainer:
+    def alg_visual(self, ,args: tuple) -> Trainer:
         return VisualTrainer()
 
     def alg_memory(self, args: tuple) -> Trainer:

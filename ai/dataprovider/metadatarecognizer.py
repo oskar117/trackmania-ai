@@ -29,7 +29,6 @@ class ImageDataRecognizer(MetaDataRecognizer):
         return int(re.sub('[^0-9-]', '', str_value.strip().replace('o', '0')))
 
     def extract_data(self, img=None):
-        width, height = img.shape[:2]
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
         img = 255 - img

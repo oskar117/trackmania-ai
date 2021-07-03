@@ -2,7 +2,6 @@ import time
 
 import cv2
 import neat
-import pyautogui
 import pydirectinput
 from ai.car import Car
 from ai.dataprovider.metadatarecognizer import ImageDataRecognizer, MemoryDataRecognizer, MetaDataRecognizer

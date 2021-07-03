@@ -2,6 +2,7 @@ import time
 
 import cv2
 import neat
+import pyautogui
 import pydirectinput
 from ai.car import Car
 from ai.dataprovider.metadatarecognizer import ImageDataRecognizer, MemoryDataRecognizer, MetaDataRecognizer
@@ -55,11 +56,22 @@ class Trainer:
                         lap_completed = True
                         fitness += 100000
             genomes[index][1].fitness = fitness
+            # self.save_replay()
             if fitness > self.best[1]:
                 self.best = (nets[cars.index(car)], fitness)
 
     def fitness(self, metadata: tuple) -> int:
         pass
+
+    def save_replay(self):
+        pydirectinput.press("r")
+        time.sleep(1)
+        pydirectinput.press("up")
+        time.sleep(1)
+        pydirectinput.press("enter")
+        time.sleep(1)
+        pydirectinput.press("enter")
+        time.sleep(1)
 
 
 class VisualTrainer(Trainer):

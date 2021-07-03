@@ -56,7 +56,13 @@ class Commands(Options):
             pickle.dump(best_net, f)
 
     def com_help(self, input_params: str) -> None:
-        print("help"),
+        print("""
+Usage:
+    python main.py [learn|play] memory [best_file_name] [game_pid] [speed_addr] [gear_addr]
+    [passed_checkpoints_addr] [last_checkpoint_time_addr] [last_lap_time_addr]
+OR
+    python main.py [learn|play] visual [best_file_name] [path_to_tesseract]
+        """),
 
     def __set_up_neat(self, config_file: str) -> neat.Population:
         config = neat.config.Config(neat.DefaultGenome, neat.DefaultReproduction, neat.DefaultSpeciesSet,

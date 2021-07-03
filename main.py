@@ -10,10 +10,11 @@ class Main:
         self.algorithm_dict = Algorithms().to_dict()
 
     def run(self):
-        cmd, *input_args = sys.argv[1:]
-        if not cmd:
+        if len(sys.argv) < 2:
             print("No parameters given")
+            self.command_dict['help'](None)
         else:
+            cmd, *input_args = sys.argv[1:]
             if cmd in self.command_dict:
                 try:
                     alg_instance = None
@@ -26,6 +27,7 @@ class Main:
                     print(e, file=sys.stderr)
             else:
                 print(f"Command '{cmd}' not found")
+                self.command_dict['help'](None)
 
 
 if __name__ == "__main__":
